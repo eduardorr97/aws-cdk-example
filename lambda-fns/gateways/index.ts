@@ -1,8 +1,9 @@
 import { sendRes, read, create, update, prepareUpdateExpression, remove } from '../service.tool'
+import { v4 as uuidv4 } from 'uuid';
 
 exports.handler = async (event: any) => {
     const params = {
-        TableName: process.env.AWS_DYNAMODB_TABLE_NAME
+        TableName: process.env.TABLE_NAME
     }
 
     switch (event.httpMethod) {
@@ -46,7 +47,7 @@ const toCreate = async (event: any, params: any) => {
         return sendRes(501, 'Bad request, no gateway found.')
     }
 
-    gateway.serial = gateway.serial || (Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15))
+    gateway.serial = gateway.serial || uuidv4()
     gateway.createdAt = new Date().getTime()
 
     params.Item = Object.assign({}, gateway)

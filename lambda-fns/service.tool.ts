@@ -1,9 +1,9 @@
 const { DynamoDB } = require('aws-sdk');
+const db = new DynamoDB.DocumentClient();
 
 export const read = async (params: any) => {
-    const dynamo = new DynamoDB();
     try {
-        const result = await dynamo.get(params).promise()
+        const result = await db.get(params).promise()
         return sendRes(200, JSON.stringify(result))
     } catch (error) {
         return sendRes(error.statusCode, JSON.stringify(error))
@@ -11,9 +11,8 @@ export const read = async (params: any) => {
 }
 
 export const create = async (params: any) => {
-    const dynamo = new DynamoDB();
     try {
-        const result = await dynamo.put(params).promise()
+        const result = await db.put(params).promise()
         return sendRes(200, JSON.stringify(result))
     } catch (error) {
         return sendRes(error.statusCode, JSON.stringify(error))
@@ -21,9 +20,8 @@ export const create = async (params: any) => {
 }
 
 export const update = async (updateParams: any) => {
-    const dynamo = new DynamoDB();
     try {
-        const result = await dynamo.update(updateParams).promise()
+        const result = await db.update(updateParams).promise()
         return sendRes(200, JSON.stringify(result))
     } catch (error) {
         return sendRes(error.statusCode, JSON.stringify(error))
@@ -31,9 +29,8 @@ export const update = async (updateParams: any) => {
 }
 
 export const remove = async (params: any) => {
-    const dynamo = new DynamoDB();
     try {
-        const result = await dynamo.delete(params).promise()
+        const result = await db.delete(params).promise()
         return sendRes(200, JSON.stringify(result))
     } catch (error) {
         return sendRes(error.statusCode, JSON.stringify(error))

@@ -1,8 +1,9 @@
 import { sendRes, read, create, update, prepareUpdateExpression, remove } from '../service.tool'
+import { v4 as uuidv4 } from 'uuid';
 
 exports.handler = async (event: any) => {
     const params = {
-        TableName: process.env.AWS_DYNAMODB_TABLE_NAME
+        TableName: process.env.TABLE_NAME
     }
 
     switch (event.httpMethod) {
@@ -22,13 +23,13 @@ exports.handler = async (event: any) => {
 const toRead = async (event: any, params: any) => {
     console.log("get peripheral request:", JSON.stringify(event, undefined, 2));
 
-    let id = event?.queryStringParameters?.peripheralId
-    if (!id) {
+    let uid = event?.queryStringParameters?.uid
+    if (!uid) {
         return sendRes(501, 'Bad request, no peripheralId found.')
     }
 
     params.Key = {
-        id
+        uid
     }
 
     return await read(params)
@@ -46,12 +47,12 @@ const toCreate = async (event: any, params: any) => {
         return sendRes(501, 'Bad request, no peripheral found.')
     }
 
-    peripheral.id = peripheral.id || (Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15))
+    peripheral.uid = peripheral.uid || uuidv4()
     peripheral.createdAt = new Date().getTime()
 
     params.Item = Object.assign({}, peripheral)
     params.Key = {
-        id: peripheral.id
+        uid: peripheral.uid
     }
 
     return await create(params)
@@ -61,13 +62,13 @@ const toCreate = async (event: any, params: any) => {
 const toRemove = async (event: any, params: any) => {
     console.log("remove peripheral request:", JSON.stringify(event, undefined, 2));
 
-    let id = event?.queryStringParameters?.id
-    if (!id) {
+    let uid = event?.queryStringParameters?.uid
+    if (!uid) {
         return sendRes(501, 'Bad request, no peripheralId found.')
     }
 
     params.Key = {
-        id
+        uid
     }
 
     return await remove(params)
@@ -89,7 +90,7 @@ const toUpdate = async (event: any, params: any) => {
 
     params.Item = Object.assign({}, peripheral)
     params.Key = {
-        id: peripheral.id
+        uid: peripheral.uid
     }
 
     const updateExpression = prepareUpdateExpression(params)
